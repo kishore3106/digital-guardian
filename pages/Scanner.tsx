@@ -662,19 +662,21 @@ const Scanner: React.FC<ScannerProps> = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 4 * 1024 * 1024) {
-        setErrorImage("File is too large. Please select an image under 4MB.");
-        return;
-      }
-      setErrorImage(null);
-      clearAllReports();
-      setImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+        if (file.size > 4 * 1024 * 1024) {
+            setErrorImage("File is too large. Please select an image under 4MB.");
+        } else {
+            setErrorImage(null);
+            clearAllReports();
+            setImageFile(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
     }
+    // FIX: Reset file input to allow re-uploading the same file and ensure onChange always fires.
+    e.target.value = '';
   };
 
   const handleImageAnalyze = async () => {
@@ -702,19 +704,21 @@ const Scanner: React.FC<ScannerProps> = ({
    const handleVideoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 50 * 1024 * 1024) { // 50MB limit for videos
-        setErrorVideo("File is too large. Please select a video under 50MB.");
-        return;
-      }
-      setErrorVideo(null);
-      clearAllReports();
-      setVideoFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setVideoPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+        if (file.size > 50 * 1024 * 1024) { // 50MB limit for videos
+            setErrorVideo("File is too large. Please select a video under 50MB.");
+        } else {
+            setErrorVideo(null);
+            clearAllReports();
+            setVideoFile(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setVideoPreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
     }
+    // FIX: Reset file input to allow re-uploading the same file and ensure onChange always fires.
+    e.target.value = '';
   };
   
   const handleVideoAnalyze = async () => {
@@ -747,15 +751,17 @@ const Scanner: React.FC<ScannerProps> = ({
   const handlePdfFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 10 * 1024 * 1024) { // 10MB limit for PDFs
-        setErrorPdf("File is too large. Please select a PDF under 10MB.");
-        return;
-      }
-      setErrorPdf(null);
-      clearAllReports();
-      setPdfFile(file);
-      setPdfPreview(file.name); // For PDF, just show the name
+        if (file.size > 10 * 1024 * 1024) { // 10MB limit for PDFs
+            setErrorPdf("File is too large. Please select a PDF under 10MB.");
+        } else {
+            setErrorPdf(null);
+            clearAllReports();
+            setPdfFile(file);
+            setPdfPreview(file.name); // For PDF, just show the name
+        }
     }
+    // FIX: Reset file input to allow re-uploading the same file and ensure onChange always fires.
+    e.target.value = '';
   };
 
   const handlePdfAnalyze = async () => {
