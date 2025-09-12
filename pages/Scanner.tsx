@@ -881,7 +881,7 @@ const Scanner: React.FC<ScannerProps> = ({
 
             {(() => {
                 if (isLoadingImage) {
-                    return <Loading text={loadingTip || loadingMessage || t('scanner.image_loading')} />;
+                    return <Loading text={t('scanner.image_loading_deep')} />;
                 }
                 if (errorImage) {
                     return <p className="text-red-400 text-center">{errorImage}</p>;
