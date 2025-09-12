@@ -85,7 +85,13 @@ export default {
         analysis_level: "Analysis Level",
         rigor_standard: "Standard",
         rigor_deep: "Deep",
-        translating: "Re-translating analysis..."
+        translating: "Re-translating analysis...",
+        tip1: "Enable Two-Factor Authentication (2FA) on all your accounts for an extra layer of security.",
+        tip2: "Use a unique, complex password for each online service. A password manager can help!",
+        tip3: "Be wary of unsolicited emails or messages, especially those creating a sense of urgency.",
+        tip4: "Hover over links before clicking to verify they lead to a legitimate website.",
+        tip5: "Keep your software and operating system updated to protect against the latest threats.",
+        tip6: "Avoid using public Wi-Fi for sensitive transactions like banking or shopping."
     },
     assistant: {
         title: "AI Security Assistant",
@@ -220,7 +226,13 @@ export default {
         analysis_level: "பகுப்பாய்வு நிலை",
         rigor_standard: "நிலையான",
         rigor_deep: "ஆழமான",
-        translating: "பகுப்பாய்வை மீண்டும் மொழிபெயர்க்கிறது..."
+        translating: "பகுப்பாய்வை மீண்டும் மொழிபெயர்க்கிறது...",
+        tip1: "உங்கள் எல்லா கணக்குகளிலும் கூடுதல் பாதுகாப்பு அடுக்குக்கு இரண்டு காரணி அங்கீகாரத்தை (2FA) இயக்கவும்.",
+        tip2: "ஒவ்வொரு ஆன்லைன் சேவைக்கும் ஒரு தனித்துவமான, சிக்கலான கடவுச்சொல்லைப் பயன்படுத்தவும். ஒரு கடவுச்சொல் மேலாளர் உதவலாம்!",
+        tip3: "கேட்கப்படாத மின்னஞ்சல்கள் அல்லது செய்திகள் குறித்து எச்சரிக்கையாக இருங்கள், குறிப்பாக அவசர உணர்வை உருவாக்கும்.",
+        tip4: "கிளிக் செய்வதற்கு முன் இணைப்புகளின் மீது வட்டமிட்டு அவை முறையான வலைத்தளத்திற்கு இட்டுச் செல்கின்றனவா என்பதை சரிபார்க்கவும்.",
+        tip5: "சமீபத்திய அச்சுறுத்தல்களுக்கு எதிராக பாதுகாக்க உங்கள் மென்பொருள் மற்றும் இயக்க முறைமையை புதுப்பித்த நிலையில் வைத்திருங்கள்.",
+        tip6: "வங்கி அல்லது ஷாப்பிங் போன்ற முக்கியமான பரிவர்த்தனைகளுக்கு பொது வைஃபையைப் பயன்படுத்துவதைத் தவிர்க்கவும்."
     },
     assistant: {
         title: "AI பாதுகாப்பு உதவியாளர்",
@@ -355,7 +367,13 @@ export default {
         analysis_level: "विश्लेषण स्तर",
         rigor_standard: "मानक",
         rigor_deep: "गहरा",
-        translating: "विश्लेषण का पुनः अनुवाद किया जा रहा है..."
+        translating: "विश्लेषण का पुनः अनुवाद किया जा रहा है...",
+        tip1: "सुरक्षा की एक अतिरिक्त परत के लिए अपने सभी खातों पर टू-फैक्टर ऑथेंटिकेशन (2FA) सक्षम करें।",
+        tip2: "प्रत्येक ऑनलाइन सेवा के लिए एक अद्वितीय, जटिल पासवर्ड का उपयोग करें। एक पासवर्ड मैनेजर मदद कर सकता है!",
+        tip3: "अनचाहे ईमेल या संदेशों से सावधान रहें, खासकर वे जो तात्कालिकता की भावना पैदा करते हैं।",
+        tip4: "क्लिक करने से पहले लिंक पर होवर करके सत्यापित करें कि वे एक वैध वेबसाइट पर ले जाते हैं।",
+        tip5: "नवीनतम खतरों से बचाने के लिए अपने सॉफ़्टवेयर और ऑपरेटिंग सिस्टम को अपडेट रखें।",
+        tip6: "बैंकिंग या खरीदारी जैसे संवेदनशील लेनदेन के लिए सार्वजनिक वाई-फाई का उपयोग करने से बचें।"
     },
     assistant: {
         title: "एआई सुरक्षा सहायक",
