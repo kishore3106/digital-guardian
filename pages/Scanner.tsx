@@ -37,11 +37,11 @@ interface ScannerProps {
 
 const cueColors = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#8b5cf6'];
 
-const VisualCueMarker: React.FC<{ cue: ImageVisualCue | VideoVisualCue, index: number }> = ({ cue, index }) => {
+const VisualCueMarker: React.FC<{ cue: ImageVisualCue | VideoVisualCue, index: number, isActive?: boolean }> = ({ cue, index, isActive }) => {
     const color = cueColors[index % cueColors.length];
     return (
         <div
-            className="absolute transition-all duration-300 pointer-events-none rounded-full"
+            className={`absolute transition-all duration-300 pointer-events-none rounded-full ${isActive ? 'animate-pulse-border' : ''}`}
             style={{
                 left: `${cue.area[0]}%`,
                 top: `${cue.area[1]}%`,
@@ -50,6 +50,8 @@ const VisualCueMarker: React.FC<{ cue: ImageVisualCue | VideoVisualCue, index: n
                 backgroundColor: color + '33', // Semi-transparent fill
                 border: `2px solid ${color}`,
                 boxShadow: `0 0 15px ${color}`,
+                // @ts-ignore
+                '--cue-color': color, // Pass color to CSS animation
             }}
         >
              <div 
@@ -62,26 +64,20 @@ const VisualCueMarker: React.FC<{ cue: ImageVisualCue | VideoVisualCue, index: n
     );
 };
 
-const ImageAnalysisReportDisplay: React.FC<{ report: ImageAnalysisReport, imagePreview: string | null, rigor: 'standard' | 'deep', t: (key: string, options?: any) => string }> = ({ report, imagePreview, rigor, t }) => {
-    const [hoveredCueIndex, setHoveredCueIndex] = useState<number | null>(null);
+const ImageAnalysisReportDisplay: React.FC<{ report: ImageAnalysisReport, imagePreview: string | null, t: (key: string, options?: any) => string }> = ({ report, imagePreview, t }) => {
+    const [activeCueIndex, setActiveCueIndex] = useState<number | null>(null);
 
     return (
         <div className="p-4 sm:p-6 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 animate-fade-in shadow-sm max-h-[85vh] flex flex-col">
             <div className="flex flex-wrap items-center justify-between gap-2 mb-4 flex-shrink-0">
                 <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">{t('scanner.analysis_report')}</h2>
-                 {rigor === 'deep' && (
-                    <div className="flex items-center gap-2 bg-purple-accent/10 text-purple-accent text-xs font-bold px-3 py-1.5 rounded-full" title="This image was analyzed by multiple specialized AI models for higher accuracy.">
-                        <AssistantIcon className="w-4 h-4" />
-                        Multi-Model Analysis
-                    </div>
-                )}
             </div>
             
             <div className="flex-grow flex flex-col lg:flex-row gap-6 min-h-0">
                 <div className="relative lg:w-[55%] flex-shrink-0 flex items-center justify-center bg-gray-100 dark:bg-gray-950 rounded-lg overflow-hidden">
                     {imagePreview && <img src={imagePreview} alt="Analyzed" className="max-w-full max-h-full object-contain" />}
                     {report.visualCues.map((cue, index) => (
-                       <VisualCueMarker key={index} cue={cue} index={index} />
+                       <VisualCueMarker key={index} cue={cue} index={index} isActive={activeCueIndex === index} />
                     ))}
                 </div>
 
@@ -122,10 +118,9 @@ const ImageAnalysisReportDisplay: React.FC<{ report: ImageAnalysisReport, imageP
                                   return (
                                     <li 
                                         key={i} 
-                                        className="text-sm text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800/60 p-3 rounded-md transition-all duration-300"
+                                        onClick={() => setActiveCueIndex(i === activeCueIndex ? null : i)}
+                                        className={`text-sm text-gray-600 dark:text-gray-300 p-3 rounded-md transition-all duration-300 cursor-pointer ${activeCueIndex === i ? 'bg-purple-accent/10' : 'bg-gray-100 dark:bg-gray-800/60'}`}
                                         style={{ borderLeft: `4px solid ${color}`}}
-                                        onMouseEnter={() => setHoveredCueIndex(i)}
-                                        onMouseLeave={() => setHoveredCueIndex(null)}
                                     >
                                         <span className="font-bold mr-2" style={{color}}>{t('scanner.cue_label', {index: i+1})}:</span>
                                         {cue.description}
@@ -447,6 +442,8 @@ const PdfAnalysisReportDisplay: React.FC<PdfAnalysisReportDisplayProps> = ({ rep
     );
 };
 
+const tipsKeys = ['scanner.tip1', 'scanner.tip2', 'scanner.tip3', 'scanner.tip4', 'scanner.tip5', 'scanner.tip6'];
+
 const Scanner: React.FC<ScannerProps> = ({
   url, setUrl, urlReport, setUrlReport,
   imagePreview, setImagePreview, imageReport, setImageReport,
@@ -459,20 +456,42 @@ const Scanner: React.FC<ScannerProps> = ({
   const [isLoadingUrl, setIsLoadingUrl] = useState(false);
   const [errorUrl, setErrorUrl] = useState<string | null>(null);
   const [isLoadingImage, setIsLoadingImage] = useState(false);
-  const [loadingMessage, setLoadingMessage] = useState<string>('');
   const [errorImage, setErrorImage] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [analysisRigor, setAnalysisRigor] = useState<'standard' | 'deep'>('standard');
   const [isLoadingVideo, setIsLoadingVideo] = useState(false);
   const [errorVideo, setErrorVideo] = useState<string | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [isLoadingPdf, setIsLoadingPdf] = useState(false);
   const [errorPdf, setErrorPdf] = useState<string | null>(null);
+  const [loadingMessage, setLoadingMessage] = useState<string>(''); // Used for multi-step progress
+  const [loadingTip, setLoadingTip] = useState<string>(''); // Used for random tips
   
   const isInitialMount = useRef(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
   const pdfInputRef = useRef<HTMLInputElement>(null);
+
+  const isLoading = isLoadingUrl || isLoadingImage || isLoadingVideo || isLoadingPdf;
+
+  useEffect(() => {
+    let intervalId: number | undefined;
+
+    if (isLoading) {
+        const setRandomTip = () => {
+            const randomKey = tipsKeys[Math.floor(Math.random() * tipsKeys.length)];
+            setLoadingTip(t(randomKey));
+        };
+        
+        setRandomTip(); // Set initial tip
+        intervalId = window.setInterval(setRandomTip, 3500); // Cycle every 3.5 seconds
+    }
+
+    return () => {
+        clearInterval(intervalId);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, language]); // Rerun if language changes while loading
+
 
   const clearAllReports = () => {
     setUrlReport(null);
@@ -582,7 +601,7 @@ const Scanner: React.FC<ScannerProps> = ({
             setErrorImage(null);
             try {
                 const base64Data = imagePreview.split(',')[1];
-                const report = await analyzeImage(base64Data, imageFile.type, language, analysisRigor, setLoadingMessage);
+                const report = await analyzeImage(base64Data, imageFile.type, language, setLoadingMessage);
                 setImageReport(report);
             } catch (err: any) {
                 setErrorImage('Failed to re-translate report.');
@@ -675,7 +694,6 @@ const Scanner: React.FC<ScannerProps> = ({
             reader.readAsDataURL(file);
         }
     }
-    // FIX: Reset file input to allow re-uploading the same file and ensure onChange always fires.
     e.target.value = '';
   };
 
@@ -688,7 +706,7 @@ const Scanner: React.FC<ScannerProps> = ({
 
     try {
       const base64Data = imagePreview.split(',')[1];
-      const report = await analyzeImage(base64Data, imageFile.type, language, analysisRigor, (message) => {
+      const report = await analyzeImage(base64Data, imageFile.type, language, (message) => {
           setLoadingMessage(message);
       });
       setImageReport(report);
@@ -717,7 +735,6 @@ const Scanner: React.FC<ScannerProps> = ({
             reader.readAsDataURL(file);
         }
     }
-    // FIX: Reset file input to allow re-uploading the same file and ensure onChange always fires.
     e.target.value = '';
   };
   
@@ -760,7 +777,6 @@ const Scanner: React.FC<ScannerProps> = ({
             setPdfPreview(file.name); // For PDF, just show the name
         }
     }
-    // FIX: Reset file input to allow re-uploading the same file and ensure onChange always fires.
     e.target.value = '';
   };
 
@@ -850,7 +866,7 @@ const Scanner: React.FC<ScannerProps> = ({
                 <p className="text-gray-500 dark:text-gray-400 mt-1 max-w-2xl mx-auto">{t('scanner.url_subtitle')}</p>
             </div>
             <URLInputForm url={url} setUrl={setUrl} onSubmit={handleUrlSubmit} isLoading={isLoadingUrl} />
-            {isLoadingUrl && <Loading text={t('scanner.url_loading')} />}
+            {isLoadingUrl && <Loading text={loadingTip || t('scanner.url_loading')} />}
             {errorUrl && <p className="text-red-400 text-center">{errorUrl}</p>}
             {urlReport && <SafetyReport report={urlReport} url={url} />}
         </div>
@@ -865,7 +881,7 @@ const Scanner: React.FC<ScannerProps> = ({
 
             {(() => {
                 if (isLoadingImage) {
-                    return <Loading text={loadingMessage || t('scanner.image_loading')} />;
+                    return <Loading text={loadingTip || loadingMessage || t('scanner.image_loading')} />;
                 }
                 if (errorImage) {
                     return <p className="text-red-400 text-center">{errorImage}</p>;
@@ -873,7 +889,7 @@ const Scanner: React.FC<ScannerProps> = ({
                 if (imageReport && imagePreview) {
                     return (
                         <div className="space-y-8">
-                            <ImageAnalysisReportDisplay report={imageReport} imagePreview={imagePreview} rigor={analysisRigor} t={t} />
+                            <ImageAnalysisReportDisplay report={imageReport} imagePreview={imagePreview} t={t} />
                             <div className="border-t-2 border-dashed border-gray-300 dark:border-gray-700"></div>
                             <div className="text-center">
                                 <h2 className="text-xl font-bold text-gray-800 dark:text-white">Scan Another Image</h2>
@@ -887,23 +903,6 @@ const Scanner: React.FC<ScannerProps> = ({
                         <div className="p-4 bg-gray-100 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-800">
                             <img src={imagePreview} alt="upload preview" className="max-h-80 rounded-lg mx-auto" />
                             <div className="mt-4 flex flex-col items-center gap-4">
-                                <div className="flex items-center justify-center gap-2">
-                                    <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('scanner.analysis_level')}:</span>
-                                    <div className="flex p-1 bg-gray-200 dark:bg-gray-800 rounded-md">
-                                        <button
-                                            onClick={() => setAnalysisRigor('standard')}
-                                            className={`px-3 py-1 text-xs font-semibold rounded transition-colors ${analysisRigor === 'standard' ? 'bg-purple-accent text-white' : 'text-gray-600 dark:text-gray-300'}`}
-                                        >
-                                            {t('scanner.rigor_standard')}
-                                        </button>
-                                        <button
-                                            onClick={() => setAnalysisRigor('deep')}
-                                            className={`px-3 py-1 text-xs font-semibold rounded transition-colors ${analysisRigor === 'deep' ? 'bg-purple-accent text-white' : 'text-gray-600 dark:text-gray-300'}`}
-                                        >
-                                            {t('scanner.rigor_deep')}
-                                        </button>
-                                    </div>
-                                </div>
                                 <div className="flex gap-4 justify-center">
                                     <button 
                                         onClick={() => fileInputRef.current?.click()}
@@ -940,7 +939,7 @@ const Scanner: React.FC<ScannerProps> = ({
 
             {(() => {
                 if (isLoadingVideo) {
-                    return <Loading text={loadingMessage || 'AI is analyzing the video...'} />;
+                    return <Loading text={loadingTip || loadingMessage || 'AI is analyzing the video...'} />;
                 }
                 if (errorVideo) {
                     return <p className="text-red-400 text-center">{errorVideo}</p>;
@@ -996,7 +995,7 @@ const Scanner: React.FC<ScannerProps> = ({
 
             {(() => {
                 if (isLoadingPdf) {
-                    return <Loading text={loadingMessage || 'AI is analyzing the PDF...'} />;
+                    return <Loading text={loadingTip || loadingMessage || 'AI is analyzing the PDF...'} />;
                 }
                 if (errorPdf) {
                     return <p className="text-red-400 text-center">{errorPdf}</p>;
