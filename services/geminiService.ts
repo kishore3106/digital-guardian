@@ -135,7 +135,11 @@ export async function analyzeUrl(url: string, language: string): Promise<URLSafe
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: prompt,
-      config: { responseMimeType: "application/json", responseSchema: urlResponseSchema }
+      config: { 
+        responseMimeType: "application/json", 
+        responseSchema: urlResponseSchema,
+        thinkingConfig: { thinkingBudget: 0 }
+      }
     });
     const parsedData = JSON.parse(response.text.trim()) as URLSafetyReport;
     if (!parsedData.safetyLevel || !parsedData.summary) throw new Error("Invalid AI response structure.");
@@ -146,104 +150,13 @@ export async function analyzeUrl(url: string, language: string): Promise<URLSafe
   }
 }
 
-async function analyzeImageMultiModel(
-    imageDataBase64: string,
-    mimeType: string,
-    language: string,
-    onProgress: (message: string) => void
-): Promise<ImageAnalysisReport> {
-    onProgress('Initiating enhanced multi-model analysis...');
-
-    const baseInstruction = `You MUST provide a JSON response based on the schema. For each identified area of concern, you MUST provide a bounding box and a brief description in the 'visualCues' array. Bounding box coordinates (topLeftX, topLeftY, width, height) MUST be percentages (0-100). If no suspicious areas are found, return an empty 'visualCues' array. Your entire response, including all text descriptions, MUST be in this language: ${language}.`;
-
-    const forensicPrompt = `Act as a world-class digital image forensics expert with a highly skeptical eye. Your primary directive is to find any evidence of digital alteration. Analyze this image with extreme scrutiny for signs of manipulation, deepfakes, or AI generation. Assume it could be altered and look for proof. Focus on:
-- **Light & Shadow Physics:** Are there multiple light sources that don't make sense? Do shadows fall correctly? Look at reflections in eyes and on surfaces like glasses. Are they consistent with the environment?
-- **Anatomy & Physics:** Are there subtle anatomical impossibilities (e.g., strange hands, ears, teeth)? Is hair behaving naturally?
-- **Texture & Focus:** Examine skin texture, fabric weaves, and background details. Look for unnatural smoothness, repetitive patterns, or areas that are inexplicably in or out of focus.
-- **AI Artifacts:** Hunt for tell-tale signs like waxy skin, overly perfect symmetry, distorted backgrounds, or garbled text.
-- **Bounding Box Precision:** The bounding box MUST be as tight as possible around the visual anomaly. This box will be used to draw a highlighting ellipse, so its accuracy is paramount.
-${baseInstruction} If you find nothing, your trust score should still be cautious, not 100%, and you should explain why some elements appear 'too perfect'.`;
-
-    const provenancePrompt = `Act as an AI image historian and provenance analyst. Your task is to determine if this image was created by a known AI model. Analyze its stylistic and compositional elements. Does it have the 'fingerprint' of a generator like Midjourney, DALL-E, or Stable Diffusion? Consider:
-- **Stylistic Tropes:** Does it feature common AI art themes (e.g., hyper-realism mixed with fantasy elements)? Is the color palette, composition, or lighting style characteristic of a particular AI model?
-- **Uncanny Valley:** Are there elements that are almost perfect but feel subtly 'off'? This includes eyes that don't quite focus, expressions that are slightly unnatural, or poses that a human wouldn't hold.
-- **Contextual Clues:** Does the scene depicted make logical sense? AI often creates scenes that are visually plausible but contextually bizarre.
-${baseInstruction} Your analysis is crucial for determining if the image's origin is synthetic. Highlight any stylistic choices that are common AI indicators in 'manipulationSigns'.`;
-    
-    const integrityPrompt = `Act as a data integrity analyst. Disregard the image content and focus solely on the underlying digital data. Analyze for evidence of software tampering. Your task is to find non-visual clues. Look for:
-- **Compression Anomalies:** Are there parts of the image with different compression levels, suggesting splicing (Error Level Analysis)?
-- **Noise Inconsistencies:** Is the digital noise pattern uniform across the image? Inconsistencies can reveal areas that have been added or altered.
-- **Metadata Clues:** Examine the EXIF data (or lack thereof). Does it contain traces of editing software like Photoshop, or is it suspiciously clean?
-${baseInstruction} Your goal is to find purely technical evidence of tampering. Report your findings in the 'manipulationSigns' and 'summary' fields. A lack of metadata or unusual compression should lower the trust score.`;
-
-    const imagePart = { inlineData: { data: imageDataBase64, mimeType } };
-
-    const generate = (prompt: string) => ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: { parts: [imagePart, { text: prompt }] },
-        config: { responseMimeType: "application/json", responseSchema: imageResponseSchema }
-    });
-
-    try {
-        onProgress('Dispatching to specialist AIs...');
-        const forensicPromise = generate(forensicPrompt);
-        const provenancePromise = generate(provenancePrompt);
-        const integrityPromise = generate(integrityPrompt);
-
-        onProgress('Analyzing Forensic, Provenance, and Integrity data...');
-        const responses = await Promise.all([forensicPromise, provenancePromise, integrityPromise]);
-        
-        onProgress('Synthesizing specialist reports with Lead Analyst AI...');
-
-        const specialistReportsJson = responses.map(res => res.text.trim());
-        
-        const leadAnalystPrompt = `Act as a Lead Digital Forensics Analyst. You have received three JSON reports from your specialist AIs: a Forensics Expert, a Provenance Expert, and a Data Integrity Expert. Your job is to synthesize their findings into a single, conclusive report in JSON format.
-- **Synthesize Summaries:** Create a clear, insightful summary for a non-technical user. Start with a definitive statement about the image's likely authenticity (e.g., "This image shows strong evidence of AI generation," or "This image appears to be an authentic photograph."). Then, elaborate on the combined evidence from your specialists that led to this conclusion.
-- **Resolve Conflicts:** If specialists disagree, use your judgment to make a final determination.
-- **Prioritize Threats:** The final trust score MUST be the LOWEST score provided by any specialist. One red flag outweighs multiple green flags.
-- **Aggregate Evidence:** Combine all unique 'manipulationSigns', 'keyPoints', and 'visualCues' from the specialist reports. Do not duplicate findings.
-- **Final Confidence:** The final 'deepfakeConfidence' and 'aiGeneratedConfidence' MUST be the HIGHEST scores from any specialist.
-- **Output:** Your final output MUST be a single JSON object that strictly adheres to the provided schema. The entire response must be in this language: ${language}.
-
-Here are the specialist reports:
-Forensic Report:
-${specialistReportsJson[0]}
-
-Provenance Report:
-${specialistReportsJson[1]}
-
-Integrity Report:
-${specialistReportsJson[2]}`;
-
-        const finalResponse = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: leadAnalystPrompt,
-            config: { responseMimeType: "application/json", responseSchema: imageResponseSchema }
-        });
-
-        const finalReport = JSON.parse(finalResponse.text.trim()) as ImageAnalysisReport;
-
-        onProgress('Analysis complete.');
-        return finalReport;
-
-    } catch (error) {
-        console.error("Error during multi-model image analysis:", error);
-        throw new Error("Failed to get a valid multi-model image analysis from the AI service.");
-    }
-}
-
 export async function analyzeImage(
     imageDataBase64: string, 
     mimeType: string, 
     language: string,
-    rigor: 'standard' | 'deep' = 'standard',
     onProgress: (message: string) => void = () => {}
 ): Promise<ImageAnalysisReport> {
-    if (rigor === 'deep') {
-        return analyzeImageMultiModel(imageDataBase64, mimeType, language, onProgress);
-    }
-
-    onProgress('Analyzing image with standard model...');
+    onProgress('Analyzing image...');
     const prompt = `Act as a digital image forensics expert. Analyze this image for signs of manipulation, deepfakes, or AI generation. Focus on clear and obvious signs like unnatural textures, inconsistent shadows, distorted objects, or malformed hands. For each identified area of concern, you MUST provide a bounding box and a brief description in the 'visualCues' array. The bounding box MUST be as tight as possible to the anomaly. Bounding box coordinates (topLeftX, topLeftY, width, height) MUST be percentages (0-100). If no suspicious areas are found, return an empty 'visualCues' array. Provide a JSON response based on the schema. Your entire response MUST be in this language: ${language}.`;
     const imagePart = { inlineData: { data: imageDataBase64, mimeType } };
 
@@ -251,7 +164,11 @@ export async function analyzeImage(
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
             contents: { parts: [imagePart, { text: prompt }] },
-            config: { responseMimeType: "application/json", responseSchema: imageResponseSchema }
+            config: { 
+                responseMimeType: "application/json", 
+                responseSchema: imageResponseSchema,
+                thinkingConfig: { thinkingBudget: 0 }
+            }
         });
         const parsedData = JSON.parse(response.text.trim()) as ImageAnalysisReport;
         if (parsedData.deepfakeConfidence == null || parsedData.visualCues == null) {
@@ -293,7 +210,11 @@ Provide a single, consolidated JSON response based on the schema. Be thorough an
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
             contents: { parts: contentParts },
-            config: { responseMimeType: "application/json", responseSchema: videoResponseSchema }
+            config: { 
+                responseMimeType: "application/json", 
+                responseSchema: videoResponseSchema,
+                thinkingConfig: { thinkingBudget: 0 }
+            }
         });
         const parsedData = JSON.parse(response.text.trim()) as VideoAnalysisReport;
         if (parsedData.deepfakeConfidence == null || !parsedData.summary) {
@@ -307,104 +228,42 @@ Provide a single, consolidated JSON response based on the schema. Be thorough an
     }
 }
 
-async function analyzePdfMultiModel(
-    pdfDataBase64: string,
-    language: string,
-    onProgress: (message: string) => void
-): Promise<PdfAnalysisReport> {
-    onProgress('Initiating comprehensive PDF analysis...');
-
-    const baseInstruction = `You MUST provide a JSON response that strictly adheres to the provided schema. Your entire response, including all text fields, MUST be in this language: ${language}.`;
-
-    const malwarePrompt = `Act as a cybersecurity analyst specializing in malware and malicious link detection. Your sole focus is on the technical threats within this PDF.
-- **Extract ALL hyperlinks:** Identify every single link, visible or hidden.
-- **Assess Link Risk:** For each link, determine its risk level (High, Medium, Low, Unknown).
-- **Find Malware Indicators:** Scrutinize the document for signs of obfuscated scripts, macros, or other potential malware vectors.
-- **Populate Fields:** Your primary goal is to populate the \`detectedLinks\` and \`malwareIndicators\` fields. You must return an empty array if none are found. Other fields in your response can be minimal.
-${baseInstruction}`;
-
-    const socialEngineeringPrompt = `Act as a psychological operations expert specializing in detecting social engineering. Your entire focus is on the language, tone, and persuasive tactics used in this PDF.
-- **Analyze Text:** Examine the text for urgent or threatening language, deceptive calls-to-action, impersonation of authority (e.g., banks, government), and attempts to elicit sensitive information.
-- **Identify Tactics:** Note any psychological manipulation tactics used.
-- **Populate Field:** Your primary goal is to populate the \`socialEngineeringTactics\` field. You must return an empty array if none are found. Other fields in your response can be minimal.
-${baseInstruction}`;
-
-    const forgeryPrompt = `Act as a world-class digital document forgery expert with extreme attention to detail. Your sole focus is the visual integrity and authenticity of this PDF. Your reputation depends on your precision.
-- **Scrutinize Visuals:** Examine logos for pixelation or incorrect colors. Check fonts for inconsistencies. Verify alignment of text and graphical elements. Look for signs of edited or forged signatures. Treat every element with suspicion.
-- **Identify Visual Cues & Bounding Box Rules (CRITICAL):**
-    1.  Your primary goal is to find visual inconsistencies that suggest forgery.
-    2.  For EVERY distinct visual flaw, you MUST provide ONLY ONE visual cue in the \`visualCues\` array.
-    3.  **PRECISION IS PARAMOUNT:** The bounding box MUST be surgically precise and tightly enclose ONLY the relevant anomaly. Do NOT create large, vague boxes around a general area.
-        - GOOD EXAMPLE: If a signature is inconsistent with a printed name, the box must enclose BOTH the signature and the name to provide context for the mismatch.
-        - BAD EXAMPLE: Do NOT create two separate boxes for the signature and the name.
-        - BAD EXAMPLE: Do NOT create a large box around the entire signature block if only the signature itself is flawed. Box only the signature.
-    4.  **NO DUPLICATES:** Do NOT create multiple, overlapping boxes for the same logical issue. Combine related elements into one precise box. A single forgery attempt (e.g., a bad signature) gets ONE box.
-- **Populate Field:** Your main task is to populate the \`visualCues\` field. You must return an empty array if none are found. Other fields can be minimal.
-${baseInstruction}`;
-
-    const pdfPart = { inlineData: { data: pdfDataBase64, mimeType: 'application/pdf' } };
-
-    const generate = (prompt: string) => ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: { parts: [pdfPart, { text: prompt }] },
-        config: { responseMimeType: "application/json", responseSchema: pdfCombinedResponseSchema }
-    });
-
-    try {
-        onProgress('Dispatching to specialist AIs...');
-        const malwarePromise = generate(malwarePrompt);
-        const socialEngPromise = generate(socialEngineeringPrompt);
-        const forgeryPromise = generate(forgeryPrompt);
-
-        onProgress('Analyzing malware, social engineering, and forgery aspects...');
-        const responses = await Promise.all([malwarePromise, socialEngPromise, forgeryPromise]);
-        
-        onProgress('Synthesizing specialist reports...');
-        const specialistReportsJson = responses.map(res => res.text.trim());
-
-        const leadAnalystPrompt = `Act as a Lead Digital Forensics Analyst. You have received three JSON reports from your specialist AIs: a Malware Analyst, a Social Engineering Expert, and a Document Forgery Expert. Your job is to synthesize their findings into a single, conclusive report in JSON format.
-- **Synthesize Summaries:** Create a clear, insightful summary for a non-technical user. Start with a definitive statement about the PDF's likely safety (e.g., "This document contains high-risk phishing links and should not be trusted."). Then, elaborate on the combined evidence.
-- **Prioritize Threats:** The final trust score MUST be the LOWEST score provided by any specialist. One high-risk link or clear forgery sign should result in a very low score.
-- **AGGRESSIVELY DE-DUPLICATE EVIDENCE:** Combine all findings from the specialist reports. Your most critical task is to eliminate redundancy.
-    - For \`visualCues\`, you MUST analyze all cues from the specialist reports and MERGE any that refer to the same logical issue. For example, if one report flags a signature and another flags the name next to it as a mismatch, these are ONE issue. Combine them into a single, comprehensive cue with one bounding box that covers both elements. Be critical; do not allow multiple markers for what a human would perceive as a single problem. Choose the most descriptive explanation.
-    - For text-based findings (\`detectedLinks\`, \`malwareIndicators\`, \`socialEngineeringTactics\`), combine unique points and rephrase to avoid redundancy.
-- **Key Points:** Create a new, synthesized list of 3-4 key points that highlight the most critical findings for the user.
-- **Output:** Your final output MUST be a single JSON object that strictly adheres to the provided schema. The entire response must be in this language: ${language}.
-
-Here are the specialist reports:
-Malware Report:
-${specialistReportsJson[0]}
-
-Social Engineering Report:
-${specialistReportsJson[1]}
-
-Forgery Report:
-${specialistReportsJson[2]}`;
-        
-        const finalResponse = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: leadAnalystPrompt,
-            config: { responseMimeType: "application/json", responseSchema: pdfCombinedResponseSchema }
-        });
-
-        const finalReport = JSON.parse(finalResponse.text.trim()) as PdfAnalysisReport;
-        onProgress('Analysis complete.');
-        return finalReport;
-
-    } catch (error) {
-        console.error("Error during multi-model PDF analysis:", error);
-        throw new Error("Failed to get a valid PDF analysis from the AI service.");
-    }
-}
-
 export async function analyzePdf(
     pdfDataBase64: string,
     language: string,
     onProgress: (message: string) => void
 ): Promise<PdfAnalysisReport> {
-    return analyzePdfMultiModel(pdfDataBase64, language, onProgress);
-}
+    onProgress('Analyzing PDF document...');
 
+    const prompt = `Act as a Lead Digital Forensics Analyst. You must perform a comprehensive security analysis of the provided PDF document. Your analysis must cover three key areas:
+1.  **Malware and Link Analysis:** Extract ALL hyperlinks, assess their risk level (High, Medium, Low, Unknown), and identify any indicators of malware like obfuscated scripts. Populate \`detectedLinks\` and \`malwareIndicators\`.
+2.  **Social Engineering:** Analyze the text for psychological manipulation tactics like urgent language, impersonation, or deceptive calls-to-action. Populate \`socialEngineeringTactics\`.
+3.  **Document Forgery:** Scrutinize the visual integrity. Look for pixelated logos, inconsistent fonts, misalignments, or forged signatures. For EVERY visual flaw, provide a surgically precise bounding box in the \`visualCues\` array.
+Finally, synthesize all findings into a single, conclusive JSON report. The summary must be clear for a non-technical user, and the trust score must reflect the most severe threat found.
+Your entire response MUST be a single JSON object that strictly adheres to the provided schema and MUST be in this language: ${language}.`;
+
+    const pdfPart = { inlineData: { data: pdfDataBase64, mimeType: 'application/pdf' } };
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: { parts: [pdfPart, { text: prompt }] },
+            config: { 
+                responseMimeType: "application/json", 
+                responseSchema: pdfCombinedResponseSchema,
+                thinkingConfig: { thinkingBudget: 0 }
+            }
+        });
+
+        const finalReport = JSON.parse(response.text.trim()) as PdfAnalysisReport;
+        onProgress('Analysis complete.');
+        return finalReport;
+
+    } catch (error) {
+        console.error("Error during PDF analysis:", error);
+        throw new Error("Failed to get a valid PDF analysis from the AI service.");
+    }
+}
 
 export function startChat(language: string, mode: 'Detailed' | 'Concise'): Chat {
     const modeInstruction = mode === 'Detailed'
