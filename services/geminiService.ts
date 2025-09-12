@@ -426,6 +426,7 @@ export function startChat(language: string, mode: 'Detailed' | 'Concise'): Chat 
 - **Language and Region:** The user is speaking ${language}. Your entire response, including summaries and explanations, MUST be in this language. Prioritize search results and sources that are also in ${language} or from that geographical region if possible.
 - **Important:** You cannot return or edit images/videos/PDFs. Your entire response must be text-based, including your media analysis.`,
             tools: [{googleSearch: {}}],
+            thinkingConfig: { thinkingBudget: 0 },
         },
     });
     return chatSession;
