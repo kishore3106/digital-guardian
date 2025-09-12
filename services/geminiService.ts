@@ -157,7 +157,18 @@ export async function analyzeImage(
     onProgress: (message: string) => void = () => {}
 ): Promise<ImageAnalysisReport> {
     onProgress('Analyzing image...');
-    const prompt = `Act as a digital image forensics expert. Analyze this image for signs of manipulation, deepfakes, or AI generation. Focus on clear and obvious signs like unnatural textures, inconsistent shadows, distorted objects, or malformed hands. For each identified area of concern, you MUST provide a bounding box and a brief description in the 'visualCues' array. The bounding box MUST be as tight as possible to the anomaly. Bounding box coordinates (topLeftX, topLeftY, width, height) MUST be percentages (0-100). If no suspicious areas are found, return an empty 'visualCues' array. Provide a JSON response based on the schema. Your entire response MUST be in this language: ${language}.`;
+    const prompt = `Act as a world-class digital image forensics expert with unparalleled accuracy. Your task is a critical analysis of the provided image for any signs of digital manipulation, AI generation, or deepfakes. Your reputation for extreme accuracy depends on this.
+
+Perform a multi-layered analysis:
+1.  **Lighting and Shadow Consistency:** Analyze the direction, harshness, and color of light sources. Ensure all shadows cast by objects are consistent with these sources. Look for mismatched highlights or shadows.
+2.  **Reflection Integrity:** Examine reflections in shiny surfaces (eyes, glass, metal). Do they accurately depict the surrounding environment?
+3.  **Physical Inconsistencies:** Scrutinize for anatomical impossibilities (e.g., malformed hands, extra fingers), impossible geometry, or objects that defy physics.
+4.  **Digital Artifacts:** Look for subtle clues like compression differences between parts of the image, unusual noise patterns, sharp edges where there should be blur (or vice-versa), and signs of cloning or healing brush usage.
+5.  **AI Generation Telltales:** Check for common AI artifacts like overly smooth skin textures, strange patterns in backgrounds, and nonsensical details.
+
+For EVERY single anomaly you detect, no matter how small, you MUST provide a surgically precise bounding box in the 'visualCues' array. The description must be technical yet clear.
+
+Provide a final JSON response based on the schema. The summary must be a definitive conclusion on the image's authenticity, and the trust score must directly reflect your deep analysis. Your entire response MUST be in this language: ${language}.`;
     const imagePart = { inlineData: { data: imageDataBase64, mimeType } };
 
     try {
@@ -167,7 +178,6 @@ export async function analyzeImage(
             config: { 
                 responseMimeType: "application/json", 
                 responseSchema: imageResponseSchema,
-                thinkingConfig: { thinkingBudget: 0 }
             }
         });
         const parsedData = JSON.parse(response.text.trim()) as ImageAnalysisReport;
