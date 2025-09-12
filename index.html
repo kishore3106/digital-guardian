@@ -77,12 +77,17 @@
                 '0%': { opacity: '0', transform: 'translateY(15px)' },
                 '100%': { opacity: '1', transform: 'translateY(0)' },
               },
+              'pulse-border': {
+                '0%, 100%': { transform: 'scale(1)', boxShadow: '0 0 15px var(--cue-color, rgba(255,255,255,0.7))' },
+                '50%': { transform: 'scale(1.05)', boxShadow: '0 0 25px var(--cue-color, rgba(255,255,255,0.7))' }
+              },
             },
             animation: {
               'fade-in': 'fadeIn 0.5s ease-out forwards',
               'slide-up-fade-in': 'slideUpFadeIn 0.5s ease-out forwards',
               'pulse-bg': 'pulse-bg 0.7s ease-out',
               'slide-up-fade-in-fast': 'slide-up-fade-in-fast 0.4s ease-out forwards',
+              'pulse-border': 'pulse-border 1.5s ease-in-out infinite',
             },
           }
         }
@@ -103,7 +108,6 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
 </head>
   <body class="bg-gray-100 dark:bg-gray-950 text-gray-800 dark:text-gray-200 font-sans transition-colors duration-300">
     <div id="root"></div>
