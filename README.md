@@ -61,17 +61,16 @@ In today's digital landscape, cyber threats are evolving rapidly. Traditional se
 
 Experience Digital Guardian in action:
 
-**[🔗 Live Demo](https://your-demo-link-here.com)** *(Click to preview the app!)*
+**[🔗 Live Demo]([https://your-demo-link-here.com](https://digital-guardian-h6q8.onrender.com/))** *(Click to preview the app!)*
 
 ### Preview Screenshots
 
-```
-🖼️ Add screenshots here to showcase:
-- Main dashboard
-- Threat detection interface  
-- Security reports
-- Settings panel
-```
+<img width="1919" height="1089" alt="image" src="https://github.com/user-attachments/assets/da63c163-c9d9-4d98-90ab-96d81bfb7ab7" />
+<img width="1919" height="1089" alt="Screenshot 2025-09-13 093405" src="https://github.com/user-attachments/assets/98ec4b7d-6ee7-4490-bd91-d5a001c0adef" />
+<img width="1919" height="1090" alt="image" src="https://github.com/user-attachments/assets/7b2b5201-211b-40fd-80b2-10c73e6f4293" />
+<img width="1919" height="1090" alt="Screenshot 2025-09-13 093600" src="https://github.com/user-attachments/assets/761e66ce-36b1-486e-a9a5-6c4f16818719" />
+<img width="1919" height="1091" alt="Screenshot 2025-09-13 093610" src="https://github.com/user-attachments/assets/e325fc4f-110c-4d9b-a958-7ded0ed50def" />
+<img width="1919" height="1092" alt="Screenshot 2025-09-13 093621" src="https://github.com/user-attachments/assets/5d79c087-ce94-4071-bca0-2334fccf9f13" />
 
 ## 📥 Installation
 
@@ -299,3 +298,4 @@ Made with ❤️ for a safer digital world
 [🔝 Back to top](#-digital-guardian)
 
 </div>
+
