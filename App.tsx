@@ -10,12 +10,7 @@ import ThreatsCommunity from './pages/ThreatsCommunity';
 import Family from './pages/Family';
 
 const App: React.FC = () => {
-    const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            return 'dark';
-        }
-        return 'light';
-    });
+    const [theme, setTheme] = useState<'light' | 'dark'>('light');
     const [currentPage, setCurrentPage] = useState<Page>('Dashboard');
 
     // Scanner state
