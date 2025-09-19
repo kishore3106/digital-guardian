@@ -1,67 +1,43 @@
 # 🛡️ Digital Guardian
 
-> **Enhancing online security through real-time threat detection and prevention**
+> **A GenAI-powered cybersecurity prototype for enhanced online threat detection**
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/kishore3106/digital-guardian/releases)
-[![Status](https://img.shields.io/badge/status-active-success.svg)]()
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Hackathon Project](https://img.shields.io/badge/Project-Hackathon-orange.svg)]()
+[![GenAI](https://img.shields.io/badge/GenAI-Powered-blue.svg)]()
+[![Status](https://img.shields.io/badge/status-prototype-yellow.svg)]()
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-## 📋 Table of Contents
+## 🎯 About This Project
 
-- [Overview](#overview)
-- [Features](#features)
-- [Demo](#demo)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Technology Stack](#technology-stack)
-- [API Documentation](#api-documentation)
-- [Contributing](#contributing)
-- [Security](#security)
-- [License](#license)
-- [Contact](#contact)
+**Digital Guardian** is a prototype cybersecurity application developed for a GenAI hackathon. This collaborative project demonstrates the potential of AI-powered threat detection through an intuitive web interface, showcasing real-time security monitoring capabilities without requiring a backend database.
 
-## 🎯 Overview
+### 👥 Team
 
-**Digital Guardian** is a cutting-edge web application designed to provide comprehensive online security by detecting and preventing potential cyber threats in real-time. Our platform offers users a safe and protected digital experience through advanced threat detection algorithms, behavioral analysis, and proactive security measures.
+This project is a collaborative effort by:
+- **Kishore** - [@kishore3106](https://github.com/kishore3106)
+- **Kamlesh** - [@kamlesh-4407](https://github.com/kamlesh-4407)
 
-### 🌟 Why Digital Guardian?
-
-In today's digital landscape, cyber threats are evolving rapidly. Traditional security measures often fall short against sophisticated attacks. Digital Guardian bridges this gap by providing:
-
-- **Real-time Protection**: Instant threat detection and response
-- **User-Friendly Interface**: Intuitive design for seamless security management
-- **Comprehensive Coverage**: Multi-layered security approach
-- **Adaptive Intelligence**: Machine learning-powered threat analysis
+*Built with passion during our GenAI hackathon journey! 🚀*
 
 ## ✨ Features
 
-### 🔍 Core Security Features
-- **Real-time Threat Detection**: Advanced algorithms monitor and detect suspicious activities
-- **Malware Protection**: Comprehensive scanning and prevention system
-- **Phishing Detection**: AI-powered identification of fraudulent websites and emails
-- **Network Security**: Monitor network traffic for unusual patterns
-- **Data Encryption**: End-to-end encryption for sensitive information
+### 🔍 Core Prototype Features
+- **AI-Powered Threat Simulation**: GenAI-enhanced threat detection interface
+- **Real-time Dashboard**: Interactive security status monitoring
+- **Threat Analytics**: Simulated security insights and reports
+- **Modern UI/UX**: Clean, responsive design with dark/light mode
+- **Multi-layered Security View**: Comprehensive security module simulation
 
 ### 🖥️ User Experience
-- **Intuitive Dashboard**: Clean, modern interface with real-time security status
-- **Customizable Alerts**: Personalized notification system
-- **Detailed Reports**: Comprehensive security analytics and insights
-- **Multi-Device Support**: Cross-platform compatibility
-- **Dark/Light Mode**: Adaptive UI themes
+- **Intuitive Dashboard**: Modern interface showcasing security metrics
+- **Interactive Components**: Engaging user interactions without backend dependency
+- **Responsive Design**: Works seamlessly across devices
+- **Custom Alerts System**: Frontend-based notification demonstrations
+- **Analytics Visualization**: Charts and graphs for security insights
 
-### 🔧 Advanced Features
-- **Behavioral Analysis**: Machine learning-based user behavior monitoring
-- **Threat Intelligence**: Integration with global threat databases
-- **Automated Response**: Intelligent threat mitigation
-- **Security Audit**: Regular system health checks
-- **Backup & Recovery**: Secure data backup solutions
+## 🚀 Live Demo
 
-## 🚀 Demo
-
-Experience Digital Guardian in action:
-
-**[🔗 Live Demo]([[https://digital-guardian-h6q8.onrender.com/](https://digital-guardian-h6q8.onrender.com/)])** *(Click to preview the app!)*
+🔗 **Live Demo**: [Digital Guardian Prototype](https://digital-guardian-584841636581.us-west1.run.app/)
 
 ### Preview Screenshots
 
@@ -72,21 +48,31 @@ Experience Digital Guardian in action:
 <img width="1919" height="1091" alt="Screenshot 2025-09-13 093610" src="https://github.com/user-attachments/assets/e325fc4f-110c-4d9b-a958-7ded0ed50def" />
 <img width="1919" height="1092" alt="Screenshot 2025-09-13 093621" src="https://github.com/user-attachments/assets/5d79c087-ce94-4071-bca0-2334fccf9f13" />
 
-## 📥 Installation
+## 🛠️ Technology Stack
+
+### Frontend
+![React](https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white)
+
+### GenAI Integration
+![Gemini](https://img.shields.io/badge/Gemini-8E75B2?style=flat&logo=googlegemini&logoColor=white)
+
+### Development
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat&logo=vite&logoColor=white)
+![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=flat&logo=eslint&logoColor=white)
+
+## 🏃‍♂️ Quick Start
 
 ### Prerequisites
+- Node.js (v16 or higher)
+- npm or yarn
 
-```bash
-- Node.js (v14.0.0 or higher)
-- npm or yarn package manager
-- Modern web browser (Chrome, Firefox, Safari, Edge)
-```
-
-### Quick Start
+### Installation
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/kishore3106/digital-guardian.git
+git clone https://github.com/yourusername/digital-guardian.git
 cd digital-guardian
 ```
 
@@ -97,207 +83,121 @@ npm install
 yarn install
 ```
 
-3. **Environment Setup**
+3. **Set up environment variables** (if using GenAI APIs)
 ```bash
 cp .env.example .env
-# Edit .env with your configuration
+# Add your API keys
 ```
 
-4. **Start the application**
+4. **Start the development server**
 ```bash
-npm start
+npm run dev
 # or
-yarn start
+yarn dev
 ```
 
-5. **Access the application**
+5. **Open your browser**
 ```
-Open http://localhost:3000 in your browser
-```
-
-### Docker Installation
-
-```bash
-# Build and run with Docker
-docker build -t digital-guardian .
-docker run -p 3000:3000 digital-guardian
+http://localhost:3000
 ```
 
-## 🎮 Usage
+## 🎨 Project Structure
 
-### Getting Started
-
-1. **Initial Setup**
-   - Launch the application
-   - Complete the security configuration wizard
-   - Enable desired protection modules
-
-2. **Dashboard Navigation**
-   - Monitor real-time security status
-   - View threat alerts and recommendations
-   - Access detailed security reports
-
-3. **Customization**
-   - Configure alert preferences
-   - Set up automated responses
-   - Customize security policies
-
-### Configuration Examples
-
-```javascript
-// Example: Setting up custom threat detection rules
-const securityConfig = {
-  threatDetection: {
-    sensitivity: 'high',
-    autoResponse: true,
-    notifications: ['email', 'browser']
-  },
-  malwareScanning: {
-    realTime: true,
-    quarantine: true
-  }
-};
+```
+digital-guardian/
+├── src/
+│   ├── components/          # Reusable UI components
+│   ├── pages/              # Main application pages
+│   ├── utils/              # Utility functions
+│   ├── hooks/              # Custom React hooks
+│   ├── types/              # TypeScript type definitions
+│   └── assets/             # Static assets
+├── public/                 # Public assets
+├── docs/                   # Documentation
+└── README.md
 ```
 
-## 🛠️ Technology Stack
+## 🧪 Prototype Limitations
 
-### Frontend
-![React](https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB)
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white)
+As this is a hackathon prototype, please note:
 
-### Backend
-![Node.js](https://img.shields.io/badge/Node.js-43853D?style=flat&logo=node.js&logoColor=white)
-![Express.js](https://img.shields.io/badge/Express.js-404D59?style=flat)
-![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=flat&logo=mongodb&logoColor=white)
+- **No Backend Database**: All data is simulated and stored in local state
+- **Mock APIs**: Security scanning and threat detection are simulated
+- **Frontend-Only**: Authentication and user management are prototype implementations
+- **Limited Scope**: Focused on UI/UX and concept demonstration
 
-### Security & DevOps
-![JWT](https://img.shields.io/badge/JWT-black?style=flat&logo=JSON%20web%20tokens)
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)
-![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat&logo=github-actions&logoColor=white)
+## 🌟 Hackathon Journey
 
-## 📚 API Documentation
+This project was built during a GenAI hackathon with the goal of exploring how artificial intelligence can enhance cybersecurity interfaces. Our focus was on:
 
-### Authentication
-```http
-POST /api/auth/login
-Content-Type: application/json
+- Creating an intuitive user experience for security monitoring
+- Demonstrating GenAI integration possibilities
+- Building a scalable frontend architecture
+- Showcasing modern web development practices
 
-{
-  "email": "user@example.com",
-  "password": "securepassword"
-}
-```
+## 🚀 Future Enhancements
 
-### Threat Detection
-```http
-GET /api/threats/scan
-Authorization: Bearer <token>
+If we continue developing this project, potential improvements include:
 
-Response: {
-  "status": "clean",
-  "threatsFound": 0,
-  "lastScan": "2023-10-15T10:30:00Z"
-}
-```
-
-[📖 Full API Documentation](./docs/api.md)
+- [ ] **Backend Integration**: Add database and API endpoints
+- [ ] **Real AI Integration**: Implement actual GenAI-powered threat detection
+- [ ] **User Authentication**: Complete user management system
+- [ ] **Real-time Data**: Connect to actual security data sources
+- [ ] **Advanced Analytics**: More sophisticated threat analysis
+- [ ] **Mobile App**: Native mobile applications
 
 ## 🤝 Contributing
 
-We welcome contributions from the community! Here's how you can help:
+While this is primarily a hackathon prototype, we welcome feedback and suggestions! Feel free to:
 
-### How to Contribute
+- Open issues for bugs or enhancement ideas
+- Fork the repository for your own experiments
+- Submit pull requests for improvements
 
-1. **Fork the repository**
-2. **Create a feature branch** (`git checkout -b feature/AmazingFeature`)
-3. **Commit your changes** (`git commit -m 'Add some AmazingFeature'`)
-4. **Push to the branch** (`git push origin feature/AmazingFeature`)
-5. **Open a Pull Request**
+## 📝 Development Notes
 
-### Development Guidelines
+### Key Features Implemented
+- Modern React with TypeScript
+- Responsive Tailwind CSS styling
+- Component-based architecture
+- State management with React hooks
+- GenAI API integration (simulated/prototype)
 
-- Follow the existing code style
-- Write comprehensive tests
-- Update documentation as needed
-- Ensure security best practices
+### Challenges Overcome
+- Creating realistic security UI without real data
+- Implementing smooth user interactions
+- Building responsive design for all screen sizes
+- Integrating GenAI concepts into the interface
 
-### Areas for Contribution
+## 🏆 Hackathon Context
 
-- 🐛 Bug fixes and improvements
-- ✨ New security features
-- 📚 Documentation enhancements
-- 🧪 Testing and quality assurance
-- 🌐 Internationalization
-
-[📋 Contributing Guidelines](./CONTRIBUTING.md)
-
-## 🔒 Security
-
-Security is at the core of Digital Guardian. We take the following measures:
-
-- **Secure Development**: Following OWASP security guidelines
-- **Regular Audits**: Comprehensive security assessments
-- **Vulnerability Management**: Prompt patching and updates
-- **Data Protection**: Industry-standard encryption protocols
-
-### Reporting Security Issues
-
-If you discover a security vulnerability, please email us at security@digitalguardian.com instead of opening a public issue.
-
-## 📊 Roadmap
-
-- [ ] **v1.1.0** - Advanced AI threat detection
-- [ ] **v1.2.0** - Mobile application
-- [ ] **v1.3.0** - Enterprise features
-- [ ] **v2.0.0** - Cloud integration and scalability
-
-## 📈 Stats
-
-![GitHub stars](https://img.shields.io/github/stars/kishore3106/digital-guardian?style=social)
-![GitHub forks](https://img.shields.io/github/forks/kishore3106/digital-guardian?style=social)
-![GitHub issues](https://img.shields.io/github/issues/kishore3106/digital-guardian)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/kishore3106/digital-guardian)
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-```
-MIT License
-
-Copyright (c) 2023 Kishore
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction...
-```
-
-## 👤 Contact
-
-**Kishore** - Project Maintainer
-
-- GitHub: [@kishore3106](https://github.com/kishore3106)
-- Email: kishore@example.com
-- LinkedIn: [Kishore](https://linkedin.com/in/kishore)
+**Event**: GenAI
+**Track**: Hack2skills 
+**Theme**: Cybersecurity Innovation
 
 ## 🙏 Acknowledgments
 
-- Thanks to all contributors who have helped shape this project
-- Inspiration from the cybersecurity community
-- Open source libraries that make this project possible
+- Thanks to the hackathon organizers for the opportunity
+- GenAI community for inspiration and resources
+- Open source libraries that made rapid development possible
+- Fellow participants for motivation and feedback
+
+## 📞 Contact
+
+**Project Team**:
+- **Kishore** - [kishore3106avenger@gmail.com]
+- **Kamlesh** - [kamleshofficial55@gmail.com]
+
+**Repository**: [https://github.com/kishore3106/digital-guardian](https://github.com/kishore3106/digital-guardian)
 
 ---
 
 <div align="center">
 
-**⭐ Star this repository if you find it helpful!**
+**⭐ If you found our hackathon project interesting, please star this repository!**
 
-Made with ❤️ for a safer digital world
+*Built with ❤️ during our GenAI hackathon adventure*
 
-[🔝 Back to top](#-digital-guardian)
+**#GenAI #Hackathon #Cybersecurity #React #TypeScript**
 
 </div>
-
-
-
